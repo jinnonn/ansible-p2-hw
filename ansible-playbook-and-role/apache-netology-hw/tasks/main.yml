@@ -1,0 +1,52 @@
+---
+# tasks file for apache-netology-hw
+- name: Apache installation
+  ansible.builtin.apt:
+    name: apache2
+
+- name: Creating folder for index.html
+  ansible.builtin.file:
+      path: /var/www/html
+      state: directory
+      mode: u+rw,g+rw,o+rw
+
+- name: Adding index.html
+  template:
+    src: "index.html.jinja2"
+    dest: "/var/www/html/index.html"
+    owner: root
+    group: root
+    mode: 0755
+  notify: "Restart Apache"
+
+- name: Adding index.conf
+  template:
+    src: "index.conf.jinja2"
+    dest: "/etc/apache2/sites-available/index.conf"
+    owner: root
+    group: root
+    mode: 0755
+  notify: "Restart Apache"
+    
+- name: Opening 80 port
+  ansible.builtin.iptables:
+    chain: INPUT
+    protocol: tcp
+    destination_port: 80
+    jump: ACCEPT
+
+- name: Checking 80 port
+  ansible.builtin.wait_for:
+    port: 80
+    delay: 5
+
+- name: Starting apache2
+  ansible.builtin.service:
+    name: apache2
+    state: started
+    enabled: yes
+
+- name: Checks content of index.html
+  ansible.builtin.uri:
+    url: http://{{ ansible_default_ipv4.address }}:80
+    return_content: true

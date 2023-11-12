@@ -1,0 +1,8 @@
+---
+- name: apache-web-playbook.yml
+  hosts: test
+  become: yes
+  roles:
+  - include_roles:
+    name: apache-netology-hw
+    

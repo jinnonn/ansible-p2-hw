@@ -1,0 +1,17 @@
+<html>
+<head>
+  <title> Host specifications </title>
+</head>
+<body>
+  <p> CPU: {{ ansible_facts['processor'] }} </p>
+  <p> RAM: {{ ansible_facts['memory_mb']['real']['total'] }} </p>
+  <p> HDD: {{ ansible_facts['devices']['vda']['size'] }} </p>
+  <p> IPv4: {{ ansible_facts['default_ipv4']['address'] }} </p>
+
+  <p> All below just for tests </p>
+  <p> CPU: {{ ansible_processor }} </p>
+  <p> RAM: {{ ansible_memory_mb.real.total }} </p>
+  <p> HDD: {{ ansible_devices.vda.size }} </p>
+  <p> IPv4: {{ ansible_default_ipv4.address }} </p>
+</body>
+</html>
