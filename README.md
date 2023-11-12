@@ -1,4 +1,4 @@
-# Домашнее задание к занятию «Ansible.Часть 2»
+![image](https://github.com/jinnonn/ansible-p2-hw/assets/146999555/b8be93db-fecf-4384-8232-75669b2f285b)# Домашнее задание к занятию «Ansible.Часть 2»
 
 ### Оформление домашнего задания
 
@@ -125,7 +125,38 @@ motd-playbook.yml
 
 Модифицируйте плейбук из пункта 3, задания 1. В качестве приветствия он должен установить IP-адрес и hostname управляемого хоста, пожелание хорошего дня системному администратору. 
 
-
+### Решение 2
+---
+```
+---
+- name: motd-playbook
+  hosts: test
+  become: yes
+  tasks:
+    - name: Create 99-hello for adding "Hello Netology!" to motd
+      ansible.builtin.lineinfile:
+        path: /etc/update-motd.d/00-header
+        regexp: '^printf'
+        line: '{{ item }}'
+      with_items:
+        - 'printf "Welcome to $( hostname ) {{ ansible_default_ipv4.address }}. Have a great day dear administrator!"'
+      tags:
+        - motd-change
+    - name: Checknig motd changes
+      ansible.builtin.command: 
+        cmd: run-parts /etc/update-motd.d
+      register: output
+      tags:
+        - check-1
+    - name: Debugging motd changes
+      ansible.builtin.debug:
+        var: output.stdout_lines
+      tags:
+        - check-2
+```
+Процесс выполнения:
+![task2](https://github.com/jinnonn/ansible-p2-hw/blob/main/изображение_2023-11-12_051554909.png)
+![task2](https://github.com/jinnonn/ansible-p2-hw/blob/main/изображение_2023-11-12_051641300.png)
 
 ### Задание 3
 
@@ -146,3 +177,14 @@ motd-playbook.yml
 - разместите архив созданной роли у себя на Google диске и приложите ссылку на роль в своём решении;
 - предоставьте скриншоты выполнения плейбука;
 - предоставьте скриншот браузера, отображающего сконфигурированный index.html в качестве сайта.
+
+### Решение 3
+- Плейбук и роль находятся в данном репо
+- Выполнение плейбука:
+  ![task3](https://github.com/jinnonn/ansible-p2-hw/blob/main/изображение_2023-11-12_195951102.png)
+  ![task3](https://github.com/jinnonn/ansible-p2-hw/blob/main/изображение_2023-11-12_200045622.png)
+- Страничка в браузере (P.S. содержимое получено по публичному адресу т.к. на используемых виртуалках, которые находятся в одной локальной сети, нет GUI и браузеров):
+  ![task3](https://github.com/jinnonn/ansible-p2-hw/assets/146999555/2d3c1169-d36f-491f-8cb4-bb904064d54a)
+  ![task3](https://github.com/jinnonn/ansible-p2-hw/assets/146999555/00f2d4f3-8632-4751-a02b-39c0a1a4af06)
+
+
